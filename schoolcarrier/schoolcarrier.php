@@ -67,54 +67,54 @@ class SchoolCarrier extends CarrierModule
     
 	}
 
-/*
-** Install / Uninstall Methods
-**
-*/
-public function install()
-{
-    // We create a table containing information on the carriers
-    // that we want to create
+	/*
+	** Install / Uninstall Methods
+	**
+	*/
+	public function install()
+	{
+		// We create a table containing information on the carriers
+		// that we want to create
  
-    $carrierConfig = array(
-    0 => array('name' => 'Carrier1',
-      'id_tax_rules_group' => 0, // We do not apply thecarriers tax
-      'active' => true, 
-      'deleted' => 0,
-      'shipping_handling' => false,
-      'range_behavior' => 0,
-      'delay' => array(
-        'fr' => 'Description 1',
-        'en' => 'Description 1',
-        Language::getIsoById(Configuration::get
-                ('PS_LANG_DEFAULT')) => 'Description 1'),
-      'id_zone' => 1, // Area where the carrier operates
-      'is_module' => true, // We specify that it is a module
-      'shipping_external' => true,
-      'external_module_name' => 'schoolcarrier', // We specify the name of the module
-      'need_range' => true // We specify that we want the calculations for the ranges
-    // that are configured in the back office
-      ),
+		$carrierConfig = array(
+		0 => array('name' => 'Carrier1',
+		  'id_tax_rules_group' => 0, // We do not apply thecarriers tax
+		  'active' => true, 
+		  'deleted' => 0,
+		  'shipping_handling' => false,
+		  'range_behavior' => 0,
+		  'delay' => array(
+			'fr' => 'Description 1',
+			'en' => 'Description 1',
+			Language::getIsoById(Configuration::get
+					('PS_LANG_DEFAULT')) => 'Description 1'),
+		  'id_zone' => 1, // Area where the carrier operates
+		  'is_module' => true, // We specify that it is a module
+		  'shipping_external' => true,
+		  'external_module_name' => 'schoolcarrier', // We specify the name of the module
+		  'need_range' => true // We specify that we want the calculations for the ranges
+		// that are configured in the back office
+		  ),
 
-	);
+		);
 	
-    // We create the two carriers and retrieve the carrier ids
-    // And save the ids in a database
-    // Feel free to take a look at the code to see how installExternalCarrier works
-    // However you should not normally need to modify this function
+		// We create the two carriers and retrieve the carrier ids
+		// And save the ids in a database
+		// Feel free to take a look at the code to see how installExternalCarrier works
+		// However you should not normally need to modify this function
  
-    $id_carrier1 = $this->installExternalCarrier($carrierConfig[0]);
+		$id_carrier1 = $this->installExternalCarrier($carrierConfig[0]);
 
-    Configuration::updateValue('SCHOOL_CARRIER_ID', (int)$id_carrier1);
+		Configuration::updateValue('SCHOOL_CARRIER_ID', (int)$id_carrier1);
 
-    // Then proceed with a standard module install
-    // Later we will take a look at the purpose of theupdatecarrier hook
-    if (!parent::install() ||
-        !$this->registerHook('updateCarrier'))
-        return false;
+		// Then proceed with a standard module install
+		// Later we will take a look at the purpose of theupdatecarrier hook
+		if (!parent::install() ||
+			!$this->registerHook('updateCarrier'))
+			return false;
  
-    return true;
-}
+		return true;
+	}
 
 
 	public function uninstall()
@@ -168,50 +168,50 @@ public function install()
 
 
 
-/*
-** Front Methods
-**
-** If you set the variable need_range to true when you created your carrier
-** in the install() method, the method called up by the Cart class
-** will be getOrderShippingCost()
-** Otherwise the method called up will be getOrderShippingCostExternal
-**
-** The $params variable contains the basket, the customer and their addresses
-** The $shipping_cost variable contains the cost calculated
-** according to the price ranges set
-** for the carrier in the backoffice
-**
-*/
+	/*
+	** Front Methods
+	**
+	** If you set the variable need_range to true when you created your carrier
+	** in the install() method, the method called up by the Cart class
+	** will be getOrderShippingCost()
+	** Otherwise the method called up will be getOrderShippingCostExternal
+	**
+	** The $params variable contains the basket, the customer and their addresses
+	** The $shipping_cost variable contains the cost calculated
+	** according to the price ranges set
+	** for the carrier in the backoffice
+	**
+	*/
  
-public function getOrderShippingCost($params, $shipping_cost)
-{
-    // This example returns the shipping fee with the additional cost
-    // but you can call up a webservice or perform the calculation you want
-    // before returning the final shipping fee
+	public function getOrderShippingCost($params, $shipping_cost)
+	{
+		// This example returns the shipping fee with the additional cost
+		// but you can call up a webservice or perform the calculation you want
+		// before returning the final shipping fee
  
- 	//Free!!!
-    if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
-        return (float)(0.0);
+		//Free!!!
+		if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
+			return (float)(0.0);
  
 
-    return false;
-}
+		return false;
+	}
 
-public function getOrderShippingCostExternal($params)
-{
-    // This example returns the additional cost
-    // but you can call up a webservice or perform the calculation you want
-    // before returning the final shipping fee
+	public function getOrderShippingCostExternal($params)
+	{
+		// This example returns the additional cost
+		// but you can call up a webservice or perform the calculation you want
+		// before returning the final shipping fee
  
- 	//Free!!!
-    if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
-    	return (float)(0.0);
+		//Free!!!
+		if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
+			return (float)(0.0);
 
-    // If the carrier is not recognised, just return false
-    // and the carrier will not appear in the carrier list
+		// If the carrier is not recognised, just return false
+		// and the carrier will not appear in the carrier list
  
-    return false;
-}
+		return false;
+	}
 
 } //class SchoolCarrier
 
