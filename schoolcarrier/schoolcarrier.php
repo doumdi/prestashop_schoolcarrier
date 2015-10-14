@@ -52,13 +52,14 @@ class SchoolCarrier extends CarrierModule
             // These warnings will appear on the page where the modules are listed
             $warning = array();
             
-            if (!in_array((int)(Configuration::get('SCHOOL_CARRIER_ID')),
-                $id_carrier_list)) $warning[] .= $this->l('"Carrier 1"').' ';
-   
- 
 
- PrestaShopLogger::addLog('***potentially writing mustbeconfigured', 2);
-        
+            if (!in_array((int)(Configuration::get('SCHOOL_CARRIER_ID')), $id_carrier_list))
+                $warning[] .= $this->l('"SchoolCarrier"').' ';
+
+
+            PrestaShopLogger::addLog('***potentially writing mustbeconfigured', 2);
+            PrestaShopLogger::addLog(Configuration::get('SCHOOL_CARRIER_ID'),2);
+
             if (count($warning))
                 $this->warning .= implode(' , ',$warning).$this->l('must be configured');
         }
@@ -92,7 +93,7 @@ class SchoolCarrier extends CarrierModule
           'is_module' => true, // We specify that it is a module
           'shipping_external' => true,
           'external_module_name' => 'schoolcarrier', // We specify the name of the module
-          'need_range' => false // We specify that we want the calculations for the ranges
+          'need_range' => true // We specify that we want the calculations for the ranges
         // that are configured in the back office
           ),
 
