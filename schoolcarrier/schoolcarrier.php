@@ -111,7 +111,9 @@ class SchoolCarrier extends CarrierModule
         // Then proceed with a standard module install
         // Later we will take a look at the purpose of theupdatecarrier hook
         if (!parent::install() ||
-            !$this->registerHook('updateCarrier'))
+            !$this->registerHook('updateCarrier') ||
+            !$this->registerHook('displayBeforeCarrier')
+            )
             return false;
  
         return true;
@@ -124,7 +126,8 @@ class SchoolCarrier extends CarrierModule
     {
         // We first carry out a classic uninstall of a module
         if (!parent::uninstall() ||
-            !$this->unregisterHook('updateCarrier'))
+            !$this->unregisterHook('updateCarrier') ||
+            !$this->unregisterHook('displayBeforeCarrier'))
             return false;  
         
              
@@ -321,7 +324,7 @@ class SchoolCarrier extends CarrierModule
         // This example returns the shipping fee with the additional cost
         // but you can call up a webservice or perform the calculation you want
         // before returning the final shipping fee
- PrestaShopLogger::addLog('***went through getOrderShippingCost', 2);
+        PrestaShopLogger::addLog('***went through getOrderShippingCost', 2);
         //Free!!!
         if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
             return (float)(0.0);
@@ -336,7 +339,7 @@ class SchoolCarrier extends CarrierModule
         // but you can call up a webservice or perform the calculation you       want
         // before returning the final shipping fee
  
- PrestaShopLogger::addLog('***went through getOrderShippingCostExternal', 2);
+        PrestaShopLogger::addLog('***went through getOrderShippingCostExternal', 2);
         //Free!!!
         if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
             return (float)(0.0);
@@ -345,6 +348,18 @@ class SchoolCarrier extends CarrierModule
         // and the carrier will not appear in the carrier list
  
         return false;
+    }
+
+
+    /**
+    ** Hook displayBeforeCarrier, should be called before displaying carriers.
+    */
+    public function hookdisplayBeforeCarrier($params)
+    {
+        PrestaShopLogger::addLog('***hookdisplayBeforeCarrier called!!!', 2);
+
+        return '<h1>Hello world!</h1>';
+
     }
 
 } //class SchoolCarrier
