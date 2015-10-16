@@ -113,7 +113,8 @@ class SchoolCarrier extends CarrierModule
         if (!parent::install() ||
             !$this->registerHook('updateCarrier') ||
             !$this->registerHook('displayBeforeCarrier') ||
-            !$this->registerHook('displayCarrierList')
+            !$this->registerHook('displayCarrierList') ||
+            !$this->registerHook('actionCarrierProcess')
             )
             return false;
  
@@ -129,7 +130,8 @@ class SchoolCarrier extends CarrierModule
         if (!parent::uninstall() ||
             !$this->unregisterHook('updateCarrier') ||
             !$this->unregisterHook('displayBeforeCarrier') ||
-            !$this->unregisterHook('displayCarrierList')
+            !$this->unregisterHook('displayCarrierList') ||
+            !$this->unregisterHook('actionCarrierProcess')
             )
             return false;  
         
@@ -445,6 +447,17 @@ class SchoolCarrier extends CarrierModule
 
         //return '<h1>displayCarrierList hook!!!</h1>';
   
+    }
+
+
+    public function hookactionCarrierProcess($params)
+    {
+        $text = json_encode($params);
+        $post_text = json_encode($_POST);
+
+        $params['cart']->gift = true;
+        $params['cart']->gift_message = $_POST['firstname'] . ' ' . $_POST['lastname'];
+        PrestaShopLogger::addLog($text . $post_text, 2);
     }
 
 } //class SchoolCarrier
