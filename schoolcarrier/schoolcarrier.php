@@ -352,8 +352,17 @@ class SchoolCarrier extends CarrierModule
  
         return false;
     }
+/*
+    public function getHookController($hook_name)
+    {
+        
+        require_once(dirname(__FILE__).'/controllers/hook/'. $hook_name.'.php');
+        $controller_name = $this->name.$hook_name.'Controller';
+        $controller = new $controller_name($this, FILE, $this->_path);
+        return $controller;
 
-
+    }
+*/
     /**
     ** Hook displayBeforeCarrier, should be called before displaying carriers.
     */
@@ -361,7 +370,7 @@ class SchoolCarrier extends CarrierModule
     {
         PrestaShopLogger::addLog('*** hookdisplayBeforeCarrier called!!!', 2);
 
-        return '<h1>displayBeforeCarrier hook!!!</h1>';
+        //return '<h1>displayBeforeCarrier hook!!!</h1>';
 
     }
 
@@ -369,7 +378,73 @@ class SchoolCarrier extends CarrierModule
     {
         PrestaShopLogger::addLog('*** hookdisplayCarrierList called!!!', 2);
 
-        return '<h1>displayCarrierList hook!!!</h1>';
+        if ((int) ($params['cart']->id_carrier) == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
+        {
+
+/*            
+            // Get default Language
+            $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
+             
+            // Init Fields form array
+            $fields_form[0]['form'] = array(
+                'legend' => array(
+                    'title' => $this->l('Configuration du sac à dos'),
+                ),
+                'input' => array(
+                    array(
+                        'type' => 'text',
+                        'label' => $this->l('Teacher name'),
+                        'name' => 'SCHOOLCARRIER_TEACHER_NAME',
+                        'size' => 20,
+                        'required' => true
+                    )
+                ),
+                'submit' => array(
+                    'title' => $this->l('Save'),
+                    'class' => 'button'
+                )
+            );
+
+            $helper = new HelperForm(); 
+            $helper->module = $this;
+            $helper->name_controller = $this->name;
+       
+
+            $output_text = '';
+            try
+            {
+                $output_text = $helper->generateForm($fields_form);
+            }
+            catch(Exception $e)
+            {
+                $output_text = $e->getMessage();
+            }
+
+            return $output_text;
+*/
+
+            //$html = '<form>';
+            $html = 'First name:<br>';
+            $html .= '<input type="text" name="firstname">';
+            $html .= '<br>';
+            $html .= 'Last name:<br>';
+            $html .= '<input type="text" name="lastname">';
+            //$html .= '</form>';
+
+            return $html;            
+
+
+            /*
+            $text = get_class($params['cart']);
+            $textArray = json_encode($params);//serialize($params);
+            $params['address']->address2 =  $params['address']->address2 . 'Corpo enfant sac';
+            return '<p>displayCarrierList hook!!!' . $textArray . '</p>';
+            */
+        }
+
+
+        //return '<h1>displayCarrierList hook!!!</h1>';
+  
     }
 
 } //class SchoolCarrier
