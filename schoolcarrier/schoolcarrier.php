@@ -213,89 +213,6 @@ class SchoolCarrier extends CarrierModule
     }
 
 
-
-    public function getContent()
-    {
-        $output = null;
-     
-        if (Tools::isSubmit('submit'.$this->name))
-        {
-            $my_module_name = strval(Tools::getValue('MYMODULE_NAME'));
-            if (!$my_module_name  || empty($my_module_name) || !Validate::isGenericName($my_module_name))
-                $output .= $this->displayError( $this->l('Invalid Configuration value') );
-            else
-            {
-                Configuration::updateValue('MYMODULE_NAME', $my_module_name);
-                $output .= $this->displayConfirmation($this->l('Settings updated'));
-            }
-        }
-        return $output.$this->displayForm();
-    }
-
-
-    public function displayForm()
-    {
-        // Get default Language
-        $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
-         
-        // Init Fields form array
-        $fields_form[0]['form'] = array(
-            'legend' => array(
-                'title' => $this->l('Settings'),
-            ),
-            'input' => array(
-                array(
-                    'type' => 'text',
-                    'label' => $this->l('Configuration value'),
-                    'name' => 'MYMODULE_NAME',
-                    'size' => 20,
-                    'required' => true
-                )
-            ),
-            'submit' => array(
-                'title' => $this->l('Save'),
-                'class' => 'button'
-            )
-        );
-         
-        $helper = new HelperForm();
-         
-        // Module, token and currentIndex
-        $helper->module = $this;
-        $helper->name_controller = $this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex.'&configure='.$this->name;
-         
-        // Language
-        $helper->default_form_language = $default_lang;
-        $helper->allow_employee_form_lang = $default_lang;
-         
-        // Title and toolbar
-        $helper->title = $this->displayName;
-        $helper->show_toolbar = true;        // false -> remove toolbar
-        $helper->toolbar_scroll = true;      // yes - > Toolbar is always visible on the top of the screen.
-        $helper->submit_action = 'submit'.$this->name;
-        $helper->toolbar_btn = array(
-            'save' =>
-            array(
-                'desc' => $this->l('Save'),
-                'href' => AdminController::$currentIndex.'&configure='.$this->name.'&save'.$this->name.
-                '&token='.Tools::getAdminTokenLite('AdminModules'),
-            ),
-            'back' => array(
-                'href' => AdminController::$currentIndex.'&token='.Tools::getAdminTokenLite('AdminModules'),
-                'desc' => $this->l('Back to list')
-            )
-        );
-         
-        // Load current value
-        $helper->fields_value['MYMODULE_NAME'] = Configuration::get('MYMODULE_NAME');
-         
-        return $helper->generateForm($fields_form);
-    }
-
-
-
     /*
     ** Hook update carrier
     **
@@ -306,7 +223,6 @@ class SchoolCarrier extends CarrierModule
         if ((int)($params['id_carrier']) == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
             Configuration::updateValue('SCHOOL_CARRIER_ID', (int)($params['carrier']->id));
     }
-
 
 
     /*
@@ -354,99 +270,19 @@ class SchoolCarrier extends CarrierModule
  
         return false;
     }
-/*
+
     public function getHookController($hook_name)
     {
-        
-        require_once(dirname(__FILE__).'/controllers/hook/'. $hook_name.'.php');
+        require_once(dirname(__FILE__).'/'.$hook_name.'.php');
         $controller_name = $this->name.$hook_name.'Controller';
-        $controller = new $controller_name($this, FILE, $this->_path);
+        $controller = new $controller_name($this, __FILE__, $this->_path);
         return $controller;
-
-    }
-*/
-    /**
-    ** Hook displayBeforeCarrier, should be called before displaying carriers.
-    */
-    public function hookdisplayBeforeCarrier($params)
-    {
-        PrestaShopLogger::addLog('*** hookdisplayBeforeCarrier called!!!', 2);
-
-        //return '<h1>displayBeforeCarrier hook!!!</h1>';
-
     }
 
     public function hookdisplayCarrierList($params)
     {
-        PrestaShopLogger::addLog('*** hookdisplayCarrierList called!!!', 2);
-
-        if ((int) ($params['cart']->id_carrier) == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
-        {
-
-/*            
-            // Get default Language
-            $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
-             
-            // Init Fields form array
-            $fields_form[0]['form'] = array(
-                'legend' => array(
-                    'title' => $this->l('Configuration du sac à dos'),
-                ),
-                'input' => array(
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Teacher name'),
-                        'name' => 'SCHOOLCARRIER_TEACHER_NAME',
-                        'size' => 20,
-                        'required' => true
-                    )
-                ),
-                'submit' => array(
-                    'title' => $this->l('Save'),
-                    'class' => 'button'
-                )
-            );
-
-            $helper = new HelperForm(); 
-            $helper->module = $this;
-            $helper->name_controller = $this->name;
-       
-
-            $output_text = '';
-            try
-            {
-                $output_text = $helper->generateForm($fields_form);
-            }
-            catch(Exception $e)
-            {
-                $output_text = $e->getMessage();
-            }
-
-            return $output_text;
-*/
-
-            //$html = '<form>';
-            $html = 'First name:<br>';
-            $html .= '<input type="text" name="firstname">';
-            $html .= '<br>';
-            $html .= 'Last name:<br>';
-            $html .= '<input type="text" name="lastname">';
-            //$html .= '</form>';
-
-            return $html;            
-
-
-            /*
-            $text = get_class($params['cart']);
-            $textArray = json_encode($params);//serialize($params);
-            $params['address']->address2 =  $params['address']->address2 . 'Corpo enfant sac';
-            return '<p>displayCarrierList hook!!!' . $textArray . '</p>';
-            */
-        }
-
-
-        //return '<h1>displayCarrierList hook!!!</h1>';
-  
+        $controller = $this->getHookController('displayCarrierList');
+        return $controller->run($params);
     }
 
 
@@ -456,7 +292,7 @@ class SchoolCarrier extends CarrierModule
         $post_text = json_encode($_POST);
 
         $params['cart']->gift = true;
-        $params['cart']->gift_message = $_POST['firstname'] . ' ' . $_POST['lastname'];
+        $params['cart']->gift_message = $_POST['kid_name'] . ' ' . $_POST['teacher'];
         PrestaShopLogger::addLog($text . $post_text, 2);
     }
 
