@@ -1,25 +1,29 @@
 <div id="delivery-options">
 <h3>Ce mode de transport requiert que vous nous indiquiez les informations supplémentaires suivantes:</h3>
-<input type="text" name="kid_name" placeholder="Nom de votre enfant">
-  <select name="teacher">
-    <option value="" disabled selected>Classe de votre enfant</option>
-    {foreach from=$teachers key=relay_point item=teacher}
-    <option value="{$teacher}">{$teacher}</option>
-    {/foreach}
-  </select>
+    <div>
+        <input type="text" name="kid_name" placeholder="Nom de votre enfant">
+        <input type="text" name="kid_level" placeholder="Niveau">
+        <input type="text" name="kid_teacher" placeholder="Nom du professeur">
+    </div>
 </div>
 
 <script>
-  $(document).ready(function() {
-    $("button[name=processCarrier]").addClass("disabled");
-    $(".delivery_option_radio:not([checked])").change(function() {
-      $("button[name=processCarrier]").removeClass("disabled"); });
-    $("form [name=kid_name], form [name=teacher]").on('blur select change keyup', function() {
-      if ($("form [name=kid_name]").val() == "" || $("form [name=teacher]").val() == null) {
-        $("button[name=processCarrier]").addClass("disabled");
+
+document.addEventListener('DOMContentLoaded', function () {
+  
+    $("button[name=confirmDeliveryOption]").addClass("disabled");
+    
+    //$(".delivery_option_radio:not([checked])").change(function() {
+    //  $("button[name=confirmDeliveryOption]").removeClass("disabled"); });
+
+    $("form [name=kid_name], form [name=kid_level], form [name=kid_teacher]").on('blur select change keyup', function() {
+      if ($("form [name=kid_name]").val() == "" || $("form [name=kid_level]").val() == "" || $("form [name=kid_teacher]").val() == "") {
+        $("button[name=confirmDeliveryOption]").addClass("disabled");
       } else {
-        $("button[name=processCarrier]").removeClass("disabled");
+        $("button[name=confirmDeliveryOption]").removeClass("disabled");
       }
     });
+    
+    
   });
 </script>

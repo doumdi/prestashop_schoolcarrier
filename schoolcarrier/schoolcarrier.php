@@ -110,10 +110,14 @@ class SchoolCarrier extends CarrierModule
 
         // Then proceed with a standard module install
         // Later we will take a look at the purpose of theupdatecarrier hook
+        
+    
+        
         if (!parent::install() ||
-            !$this->registerHook('updateCarrier') ||
+            //!$this->registerHook('updateCarrier') ||
+            !$this->registerHook('actionCarrierUpdate') ||	
             !$this->registerHook('displayBeforeCarrier') ||
-            !$this->registerHook('displayCarrierList') ||
+            !$this->registerHook('displayCarrierExtraContent') ||
             !$this->registerHook('actionCarrierProcess')
             )
             return false;
@@ -128,9 +132,10 @@ class SchoolCarrier extends CarrierModule
     {
         // We first carry out a classic uninstall of a module
         if (!parent::uninstall() ||
-            !$this->unregisterHook('updateCarrier') ||
+            //!$this->unregisterHook('updateCarrier') ||
+            !$this->unregisterHook('actionCarrierUpdate') ||
             !$this->unregisterHook('displayBeforeCarrier') ||
-            !$this->unregisterHook('displayCarrierList') ||
+            !$this->unregisterHook('displayCarrierExtraContent') ||
             !$this->unregisterHook('actionCarrierProcess')
             )
             return false;  
@@ -225,6 +230,16 @@ class SchoolCarrier extends CarrierModule
     }
 
 
+
+    public function hookactionCarrierUpdate($params)
+    {
+        PrestaShopLogger::addLog('***hookactionCarrierUpdate', 2);
+        
+        // Update the id for carrier 1
+        if ((int)($params['id_carrier']) == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
+            Configuration::updateValue('SCHOOL_CARRIER_ID', (int)($params['carrier']->id));
+    }
+
     /*
     ** Front Methods
     **
@@ -279,21 +294,32 @@ class SchoolCarrier extends CarrierModule
         return $controller;
     }
 
-    public function hookdisplayCarrierList($params)
+    public function hookdisplayCarrierExtraContent($params)
     {
+        PrestaShopLogger::addLog('*** hookdisplayCarrierList', 2);
         $controller = $this->getHookController('displayCarrierList');
         return $controller->run($params);
     }
-
-
+    
     public function hookactionCarrierProcess($params)
     {
+        PrestaShopLogger::addLog('*** hookactionCarrierProcess', 3);
         $text = json_encode($params);
         $post_text = json_encode($_POST);
+        
+        $var_test = isset($_POST['confirmDeliveryOption']);
+        //PrestaShopLogger::addLog('*** hookactionCarrierProcess - var_test ' . $var_test, 3); 
+        
 
-        $params['cart']->gift = true;
-        $params['cart']->gift_message = $_POST['kid_name'] . ' ' . $_POST['teacher'];
-        PrestaShopLogger::addLog($text . $post_text, 2);
+        //if ((int)($params['cart']->id_carrier) == (int)(Configuration::get('SCHOOL_CARRIER_ID')) && isset($_POST['confirmDeliveryOption']) )
+        if ($var_test)
+        {
+            PrestaShopLogger::addLog('*** hookactionCarrierProcess - GIFT UPDATE', 3);
+            $params['cart']->gift = true;
+            $params['cart']->gift_message = $_POST['kid_name'] . ' ' . $_POST['kid_level'] . ' ' . $_POST['kid_teacher'];
+        }
+        //PrestaShopLogger::addLog("POST_TEXT " . $post_text, 2);
+        //PrestaShopLogger::addLog("\nBEFORE " . $text . "\nAFTER " . $post_text, 3);
     }
 
 } //class SchoolCarrier
