@@ -29,8 +29,8 @@ class SchoolCarrier extends CarrierModule
         $this->version = '1.0';
         $this->author = 'Y. Laberge, D. Letourneau';
         parent::__construct ();
-        $this->displayName = $this->l('SchoolCarrier');
-        $this->description = $this->l('Delivery methods that you want');
+        $this->displayName = $this->l('Sac à dos de l\'élève');
+        $this->description = $this->l('Livraison par le sac à dos de l\'enfant à l\'école');
             
         // If the module is installed, we run a few checks
         if (self::isInstalled($this->name))
@@ -56,9 +56,6 @@ class SchoolCarrier extends CarrierModule
             if (!in_array((int)(Configuration::get('SCHOOL_CARRIER_ID')), $id_carrier_list))
                 $warning[] .= $this->l('"SchoolCarrier"').' ';
 
-
-            PrestaShopLogger::addLog('***potentially writing mustbeconfigured', 2);
-            PrestaShopLogger::addLog(Configuration::get('SCHOOL_CARRIER_ID'),2);
 
             if (count($warning))
                 $this->warning .= implode(' , ',$warning).$this->l('must be configured');
@@ -88,7 +85,7 @@ class SchoolCarrier extends CarrierModule
             'fr' => 'Transport écolier',
             'en' => 'Student transport',
             Language::getIsoById(Configuration::get
-                    ('PS_LANG_DEFAULT')) => 'Student transport'),
+                    ('PS_LANG_DEFAULT')) => 'Transport écolier'),
           'id_zone' => 2, // Area where the carrier operates
           'is_module' => true, // We specify that it is a module
           'shipping_external' => true,
@@ -114,7 +111,6 @@ class SchoolCarrier extends CarrierModule
     
         
         if (!parent::install() ||
-            //!$this->registerHook('updateCarrier') ||
             !$this->registerHook('actionCarrierUpdate') ||	
             !$this->registerHook('displayBeforeCarrier') ||
             !$this->registerHook('displayCarrierExtraContent') ||
@@ -132,7 +128,6 @@ class SchoolCarrier extends CarrierModule
     {
         // We first carry out a classic uninstall of a module
         if (!parent::uninstall() ||
-            //!$this->unregisterHook('updateCarrier') ||
             !$this->unregisterHook('actionCarrierUpdate') ||
             !$this->unregisterHook('displayBeforeCarrier') ||
             !$this->unregisterHook('displayCarrierExtraContent') ||
@@ -233,8 +228,6 @@ class SchoolCarrier extends CarrierModule
 
     public function hookactionCarrierUpdate($params)
     {
-        PrestaShopLogger::addLog('***hookactionCarrierUpdate', 2);
-        
         // Update the id for carrier 1
         if ((int)($params['id_carrier']) == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
             Configuration::updateValue('SCHOOL_CARRIER_ID', (int)($params['carrier']->id));
@@ -260,8 +253,7 @@ class SchoolCarrier extends CarrierModule
         // This example returns the shipping fee with the additional cost
         // but you can call up a webservice or perform the calculation you want
         // before returning the final shipping fee
-        PrestaShopLogger::addLog('*** went through getOrderShippingCost', 2);
-        //Free!!!
+        // Free!!!
         if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
             return (float)(0.0);
  
@@ -274,9 +266,7 @@ class SchoolCarrier extends CarrierModule
         // This example returns the additional cost
         // but you can call up a webservice or perform the calculation you       want
         // before returning the final shipping fee
- 
-        PrestaShopLogger::addLog('*** went through getOrderShippingCostExternal', 2);
-        //Free!!!
+        // Free!!!
         if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
             return (float)(0.0);
 
@@ -296,33 +286,32 @@ class SchoolCarrier extends CarrierModule
 
     public function hookdisplayCarrierExtraContent($params)
     {
-        PrestaShopLogger::addLog('*** hookdisplayCarrierList', 2);
         $controller = $this->getHookController('displayCarrierList');
         return $controller->run($params);
     }
     
     public function hookactionCarrierProcess($params)
     {
-        PrestaShopLogger::addLog('*** hookactionCarrierProcess', 3);
         $text = json_encode($params);
         $post_text = json_encode($_POST);
         
-        $var_test = isset($_POST['confirmDeliveryOption']);
-        //PrestaShopLogger::addLog('*** hookactionCarrierProcess - var_test ' . $var_test, 3); 
-        
+        $is_delivery_submit = isset($_POST['confirmDeliveryOption']);
 
-        //if ((int)($params['cart']->id_carrier) == (int)(Configuration::get('SCHOOL_CARRIER_ID')) && isset($_POST['confirmDeliveryOption']) )
-        if ($var_test)
+
+        if ($is_delivery_submit)
         {
-            PrestaShopLogger::addLog('*** hookactionCarrierProcess - GIFT UPDATE', 3);
-            $params['cart']->gift = true;
-            $params['cart']->gift_message = $_POST['kid_name'] . ' ' . $_POST['kid_level'] . ' ' . $_POST['kid_teacher'];
+            $cart = $params['cart'];
+            
+            $cart->gift = true;
+            $cart->gift_message = $_POST['kid_name'] . ' ' . $_POST['kid_level'] . ' ' . $_POST['kid_teacher'];
+            
+            //DB
+            $cart->update();
         }
-        //PrestaShopLogger::addLog("POST_TEXT " . $post_text, 2);
-        //PrestaShopLogger::addLog("\nBEFORE " . $text . "\nAFTER " . $post_text, 3);
     }
 
 } //class SchoolCarrier
 
 
 ?>
+
