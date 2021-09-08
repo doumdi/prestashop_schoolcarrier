@@ -1,4 +1,4 @@
-<div id="delivery-options-schoolcarrier-feerie">
+<div id="delivery-options-schoolcarrierfeerie">
 <h3>Ce mode de transport requiert que vous nous indiquiez les informations supplémentaires suivantes:</h3>
     <table>
         <tr>

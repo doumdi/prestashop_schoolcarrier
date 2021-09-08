@@ -303,7 +303,7 @@ class SchoolCarrierFeerie extends CarrierModule
             $cart = $params['cart'];
 
             $cart->gift = true;
-            $cart->gift_message = $_POST['feerie_kid_name'] . ' ; ' . $_POST['feerie_kid_level'] . ' ; ' . $_POST['feerie_kid_phone'];
+            $cart->gift_message = $_POST['feerie_kid_name'] . ';' . $_POST['feerie_kid_level'] . ';' . $_POST['feerie_kid_phone'];
 
             //DB
             $cart->update();

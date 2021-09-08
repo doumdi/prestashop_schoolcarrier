@@ -1,6 +1,6 @@
 <?php
 
-class SchoolCarrierDisplayCarrierListController
+class SchoolCarrierFeerieDisplayCarrierListController
 {
 	public function __construct($module, $file, $path)
 	{
