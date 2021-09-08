@@ -8,12 +8,12 @@
 if (!defined('_PS_VERSION_'))
     exit;
 
-class SchoolCarrier extends CarrierModule
+class SchoolCarrierFeerie extends CarrierModule
 {
 	public  $id_carrier;
     private $_html = '';
     private $_postErrors = array();
-    private $_moduleName = 'schoolcarrier';
+    private $_moduleName = 'schoolcarrier_feerie';
 
     /*
     ** Construct Method
@@ -24,14 +24,14 @@ class SchoolCarrier extends CarrierModule
     {
 
         // Variables common to all modules (no need to present them)
-        $this->name = 'schoolcarrier';
+        $this->name = 'schoolcarrier_feerie';
         $this->tab = 'shipping_logistics';
         $this->version = '1.0';
         $this->author = 'Y. Laberge, D. Letourneau';
         parent::__construct ();
         $this->displayName = $this->l('Sac à dos de l\'élève');
         $this->description = $this->l('Livraison par le sac à dos de l\'enfant à l\'école');
-            
+
         // If the module is installed, we run a few checks
         if (self::isInstalled($this->name))
         {
@@ -39,30 +39,30 @@ class SchoolCarrier extends CarrierModule
             global $cookie;
         	$carriers = Carrier::getCarriers($cookie->id_lang, true, false, false,
                 NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
-        
+
             $id_carrier_list = array();
             foreach($carriers as $carrier)
                 $id_carrier_list[] .= $carrier['id_carrier'];
- 
- 
- 
- 
+
+
+
+
             // We look to see if the carriers have been created for the module
             // And if any additional fees have been configured
             // These warnings will appear on the page where the modules are listed
             $warning = array();
-            
 
-            if (!in_array((int)(Configuration::get('SCHOOL_CARRIER_ID')), $id_carrier_list))
-                $warning[] .= $this->l('"SchoolCarrier"').' ';
+
+            if (!in_array((int)(Configuration::get('SCHOOL_CARRIER_FEERIE_ID')), $id_carrier_list))
+                $warning[] .= $this->l('"SchoolCarrier Feerie"').' ';
 
 
             if (count($warning))
                 $this->warning .= implode(' , ',$warning).$this->l('must be configured');
         }
-        
-        
-    
+
+
+
     }
 
     /*
@@ -73,11 +73,11 @@ class SchoolCarrier extends CarrierModule
     {
         // We create a table containing information on the carriers
         // that we want to create
- 
+
         $carrierConfig = array(
-        0 => array('name' => 'SchoolCarrier',
+        0 => array('name' => 'SchoolCarrier Feerie',
           'id_tax_rules_group' => 0, // We do not apply thecarriers tax
-          'active' => true, 
+          'active' => true,
           'deleted' => 0,
           'shipping_handling' => false,
           'range_behavior' => 0,
@@ -89,35 +89,35 @@ class SchoolCarrier extends CarrierModule
           'id_zone' => 2, // Area where the carrier operates
           'is_module' => true, // We specify that it is a module
           'shipping_external' => true,
-          'external_module_name' => 'schoolcarrier', // We specify the name of the module
+          'external_module_name' => 'schoolcarrier_feerie', // We specify the name of the module
           'need_range' => true // We specify that we want the calculations for the ranges
         // that are configured in the back office
           ),
 
         );
-    
+
         // We create the two carriers and retrieve the carrier ids
         // And save the ids in a database
         // Feel free to take a look at the code to see how installExternalCarrier works
         // However you should not normally need to modify this function
- 
+
         $id_carrier1 = $this->installExternalCarrier($carrierConfig[0]);
 
-        Configuration::updateValue('SCHOOL_CARRIER_ID', (int)$id_carrier1);
+        Configuration::updateValue('SCHOOL_CARRIER_FEERIE_ID', (int)$id_carrier1);
 
         // Then proceed with a standard module install
         // Later we will take a look at the purpose of theupdatecarrier hook
-        
-    
-        
+
+
+
         if (!parent::install() ||
-            !$this->registerHook('actionCarrierUpdate') ||	
+            !$this->registerHook('actionCarrierUpdate') ||
             !$this->registerHook('displayBeforeCarrier') ||
             !$this->registerHook('displayCarrierExtraContent') ||
             !$this->registerHook('actionCarrierProcess')
             )
             return false;
- 
+
         return true;
     }
 
@@ -133,34 +133,34 @@ class SchoolCarrier extends CarrierModule
             !$this->unregisterHook('displayCarrierExtraContent') ||
             !$this->unregisterHook('actionCarrierProcess')
             )
-            return false;  
-        
-             
+            return false;
+
+
         // We delete the carriers we created earlier
-        $Carrier1 = new Carrier((int)(Configuration::get('SCHOOL_CARRIER_ID')));
-   
+        $Carrier1 = new Carrier((int)(Configuration::get('SCHOOL_CARRIER_FEERIE_ID')));
+
         //we choose another
         if (Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier1->id))
         {
             global $cookie;
             $carriersD = Carrier::getCarriers($cookie->id_lang, true, false, false,
                     NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
-                    
+
             foreach($carriersD as $carrierD)
                 if ($carrierD['active'] AND !$carrierD['deleted']
                     AND ($carrierD['name'] != $this->_config['name']))
                     Configuration::updateValue('PS_CARRIER_DEFAULT',
                                 $carrierD['id_carrier']);
         }
-        
+
         // Then we delete the carriers using variable delete
         // in order to keep the carrier history for orders placed with them
- 
+
         $Carrier1->deleted = 1;
-  
+
         if (!$Carrier1->update())
             return false;
- 
+
         return true;;
     }
 
@@ -220,8 +220,8 @@ class SchoolCarrier extends CarrierModule
     public function hookupdateCarrier($params)
     {
         // Update the id for carrier 1
-        if ((int)($params['id_carrier']) == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
-            Configuration::updateValue('SCHOOL_CARRIER_ID', (int)($params['carrier']->id));
+        if ((int)($params['id_carrier']) == (int)(Configuration::get('SCHOOL_CARRIER_FEERIE_ID')))
+            Configuration::updateValue('SCHOOL_CARRIER_FEERIE_ID', (int)($params['carrier']->id));
     }
 
 
@@ -229,8 +229,8 @@ class SchoolCarrier extends CarrierModule
     public function hookactionCarrierUpdate($params)
     {
         // Update the id for carrier 1
-        if ((int)($params['id_carrier']) == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
-            Configuration::updateValue('SCHOOL_CARRIER_ID', (int)($params['carrier']->id));
+        if ((int)($params['id_carrier']) == (int)(Configuration::get('SCHOOL_CARRIER_FEERIE_ID')))
+            Configuration::updateValue('SCHOOL_CARRIER_FEERIE_ID', (int)($params['carrier']->id));
     }
 
     /*
@@ -247,16 +247,16 @@ class SchoolCarrier extends CarrierModule
     ** for the carrier in the backoffice
     **
     */
- 
+
     public function getOrderShippingCost($params, $shipping_cost)
     {
         // This example returns the shipping fee with the additional cost
         // but you can call up a webservice or perform the calculation you want
         // before returning the final shipping fee
         // Free!!!
-        if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
+        if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_FEERIE_ID')))
             return (float)(0.0);
- 
+
 
         return false;
     }
@@ -267,12 +267,12 @@ class SchoolCarrier extends CarrierModule
         // but you can call up a webservice or perform the calculation you       want
         // before returning the final shipping fee
         // Free!!!
-        if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
+        if ($this->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_FEERIE_ID')))
             return (float)(0.0);
 
         // If the carrier is not recognised, just return false
         // and the carrier will not appear in the carrier list
- 
+
         return false;
     }
 
@@ -289,28 +289,28 @@ class SchoolCarrier extends CarrierModule
         $controller = $this->getHookController('displayCarrierList');
         return $controller->run($params);
     }
-    
+
     public function hookactionCarrierProcess($params)
     {
         $text = json_encode($params);
         $post_text = json_encode($_POST);
-        
+
         $is_delivery_submit = isset($_POST['confirmDeliveryOption']);
 
 
         if ($is_delivery_submit)
         {
             $cart = $params['cart'];
-            
+
             $cart->gift = true;
-            $cart->gift_message = $_POST['kid_name'] . ' ' . $_POST['kid_level'] . ' ' . $_POST['kid_teacher'];
-            
+            $cart->gift_message = $_POST['feerie_kid_name'] . ' ; ' . $_POST['feerie_kid_level'] . ' ; ' . $_POST['feerie_kid_phone'];
+
             //DB
             $cart->update();
         }
     }
 
-} //class SchoolCarrier
+} //class SchoolCarrierFeerie
 
 
 ?>

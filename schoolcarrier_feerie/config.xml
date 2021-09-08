@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
-	<name>schoolcarrier</name>
-	<displayName><![CDATA[School Carrier]]></displayName>
-	<version><![CDATA[1.6]]></version>
+	<name>schoolcarrier_feerie</name>
+	<displayName><![CDATA[School Carrier Feerie]]></displayName>
+	<version><![CDATA[1.7]]></version>
 	<description><![CDATA[Offer your customers, possibility to deliver through your kid at school]]></description>
 	<author><![CDATA[Corporation Sacre-Coeur]]></author>
 	<tab><![CDATA[shipping_logistics]]></tab>

@@ -2,7 +2,7 @@
 <module>
 	<name>fedexcarrier</name>
 	<displayName><![CDATA[Transporteur &Eacute;cole]]></displayName>
-	<version><![CDATA[1.6]]></version>
+	<version><![CDATA[1.7]]></version>
 	<description><![CDATA[Propose &agrave; vos clients le transportpar votre enfant à l'&eacute;cole]]></description>
 	<author><![CDATA[Corporation Sacr&eacute;-Coeur]]></author>
 	<tab><![CDATA[shipping_logistics]]></tab>
