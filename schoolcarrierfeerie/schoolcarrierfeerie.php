@@ -13,7 +13,7 @@ class SchoolCarrierFeerie extends CarrierModule
 	public  $id_carrier;
     private $_html = '';
     private $_postErrors = array();
-    private $_moduleName = 'schoolcarrier_feerie';
+    private $_moduleName = 'schoolcarrierfeerie';
 
     /*
     ** Construct Method
@@ -24,13 +24,13 @@ class SchoolCarrierFeerie extends CarrierModule
     {
 
         // Variables common to all modules (no need to present them)
-        $this->name = 'schoolcarrier_feerie';
+        $this->name = 'schoolcarrierfeerie';
         $this->tab = 'shipping_logistics';
         $this->version = '1.0';
         $this->author = 'Y. Laberge, D. Letourneau';
         parent::__construct ();
-        $this->displayName = $this->l('Sac à dos de l\'élève');
-        $this->description = $this->l('Livraison par le sac à dos de l\'enfant à l\'école');
+        $this->displayName = $this->l('Sac à dos de l\'élève féérie');
+        $this->description = $this->l('Livraison par le sac à dos de l\'enfant à l\'école féérie');
 
         // If the module is installed, we run a few checks
         if (self::isInstalled($this->name))
@@ -54,7 +54,7 @@ class SchoolCarrierFeerie extends CarrierModule
 
 
             if (!in_array((int)(Configuration::get('SCHOOL_CARRIER_FEERIE_ID')), $id_carrier_list))
-                $warning[] .= $this->l('"SchoolCarrier Feerie"').' ';
+                $warning[] .= $this->l('"SchoolCarrierFeerie"').' ';
 
 
             if (count($warning))
@@ -75,7 +75,7 @@ class SchoolCarrierFeerie extends CarrierModule
         // that we want to create
 
         $carrierConfig = array(
-        0 => array('name' => 'SchoolCarrier Feerie',
+        0 => array('name' => 'SchoolCarrierFeerie',
           'id_tax_rules_group' => 0, // We do not apply thecarriers tax
           'active' => true,
           'deleted' => 0,
@@ -89,7 +89,7 @@ class SchoolCarrierFeerie extends CarrierModule
           'id_zone' => 2, // Area where the carrier operates
           'is_module' => true, // We specify that it is a module
           'shipping_external' => true,
-          'external_module_name' => 'schoolcarrier_feerie', // We specify the name of the module
+          'external_module_name' => 'schoolcarrierfeerie', // We specify the name of the module
           'need_range' => true // We specify that we want the calculations for the ranges
         // that are configured in the back office
           ),
