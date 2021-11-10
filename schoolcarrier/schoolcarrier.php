@@ -292,27 +292,27 @@ class SchoolCarrier extends CarrierModule
     
     public function hookactionCarrierProcess($params)
     {
-        if ((int)($params['id_carrier']) == (int)(Configuration::get('SCHOOL_CARRIER_FEERIE_ID')))
+  
+        $text = json_encode($params);
+        $post_text = json_encode($_POST);
+        
+        $is_delivery_submit = isset($_POST['confirmDeliveryOption']);
+
+
+        if ($is_delivery_submit)
         {
-            $text = json_encode($params);
-            $post_text = json_encode($_POST);
-    
-            $is_delivery_submit = isset($_POST['confirmDeliveryOption']);
-    
-    
-            if ($is_delivery_submit)
+            $cart = $params['cart'];
+          
+            if ($cart->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_ID')))
             {
-                $cart = $params['cart'];
-                if ($cart->id_carrier == (int)(Configuration::get('SCHOOL_CARRIER_FEERIE_ID')))
-                {
-                    $cart->gift = true;
-                    $cart->gift_message = $_POST['feerie_kid_name'] . ';' . $_POST['feerie_kid_level'] . ';' . $_POST['feerie_kid_phone'];
-                    
-                    //DB
-                    $cart->update();
-                }
+                $cart->gift = true;
+                $cart->gift_message = $_POST['kid_name'] . ' ; ' . $_POST['kid_level'] . ' ; ' . $_POST['kid_teacher'];
+            
+                //DB
+                $cart->update();
             }
         }
+        
     }
 
 } //class SchoolCarrier
